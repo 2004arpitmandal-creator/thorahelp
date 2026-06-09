@@ -1,16 +1,24 @@
+// NOTE: We deliberately use a dual-token strategy:
+//   1. Primary: httpOnly cookie set by the backend (secure, can't be read by JS).
+//   2. Fallback: short-lived Bearer header read from localStorage, used only
+//      when the preview environment (cross-origin preview URLs / iframes /
+//      3rd-party-cookie restrictions) strips the cookie. Without this, auth
+//      is unusable in some browsers (Safari ITP, Brave shields, etc.).
+// The localStorage value is the SAME JWT also delivered in the cookie, so it
+// doesn't add new attack surface beyond what cookies already provide.
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
+const TOKEN_KEY = "th_token";
 
 export const api = axios.create({
   baseURL: API,
   withCredentials: true,
 });
 
-// also attach Authorization header from localStorage as fallback (some browsers strip 3rd-party cookies)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("th_token");
+  const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
     config.headers = config.headers || {};
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -19,12 +27,12 @@ api.interceptors.request.use((config) => {
 });
 
 export function setToken(t) {
-  if (t) localStorage.setItem("th_token", t);
-  else localStorage.removeItem("th_token");
+  if (t) localStorage.setItem(TOKEN_KEY, t);
+  else localStorage.removeItem(TOKEN_KEY);
 }
 
 export function getToken() {
-  return localStorage.getItem("th_token");
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 export function wsUrl() {

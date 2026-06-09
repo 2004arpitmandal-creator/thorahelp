@@ -13,6 +13,10 @@ export function AuthProvider({ children }) {
       setUser(data);
       return data;
     } catch (e) {
+      // 401 here is expected for unauthenticated visitors. Don't surface; just clear user.
+      if (e?.response?.status && e.response.status !== 401) {
+        console.warn("[thoraHELP] /auth/me failed:", e?.message || e);
+      }
       setUser(null);
       return null;
     } finally {

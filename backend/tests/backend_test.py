@@ -17,8 +17,8 @@ BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://thorahelp-aid.previe
 API = f"{BASE_URL}/api"
 WS_URL = BASE_URL.replace("https://", "wss://").replace("http://", "ws://") + "/api/ws"
 
-ADMIN_EMAIL = "admin@thorahelp.app"
-ADMIN_PASSWORD = "Admin@12345"
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@thorahelp.app")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Admin@12345")
 
 LAT, LNG = 12.9716, 77.5946
 
@@ -210,7 +210,7 @@ class TestWebSocket:
                 return True
             except Exception:
                 return True
-        assert asyncio.run(run()) is True
+        assert asyncio.run(run())
 
     def test_ws_ack_and_pong(self, user_a):
         async def run():
@@ -322,10 +322,6 @@ class TestSignalsHistory:
         r = requests.get(f"{API}/signals/history", headers=auth_headers(token))
         assert r.status_code == 200
         assert isinstance(r.json(), list)
-        # admin hasn't created/responded to test signals - likely empty
-        # but in case other tests reused admin, just verify all returned belong to admin
-        admin_uid = _["user_id"] if isinstance(_, dict) else None
-        # weak assertion: list type already verified
 
     def test_get_signal_by_id_regression(self, user_a, created_signal):
         # Regression: /api/signals/{signal_id} should still work AFTER /history route

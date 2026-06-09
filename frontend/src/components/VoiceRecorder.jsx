@@ -68,7 +68,7 @@ export default function VoiceRecorder({ signalId, onUploaded }) {
         <span className="text-xs font-body font-semibold text-slate-700">Ready to send</span>
         <span className="flex items-end gap-0.5 h-5">
           {[6,10,14,18,12,8,16,12,8].map((h,i)=>(
-            <span key={i} className="w-0.5 bg-blue-600 rounded-full" style={{height:h}} />
+            <span key={`r-${i}-${h}`} className="w-0.5 bg-blue-600 rounded-full" style={{height:h}} />
           ))}
         </span>
         <button onClick={cancel} className="ml-2 p-1.5 rounded-full hover:bg-slate-200" data-testid="voice-cancel-btn" aria-label="Discard">
@@ -88,7 +88,7 @@ export default function VoiceRecorder({ signalId, onUploaded }) {
         <span className="text-xs font-body font-bold text-red-700">REC {String(Math.floor(elapsed/60)).padStart(2,"0")}:{String(elapsed%60).padStart(2,"0")}</span>
         <span className="flex items-end gap-0.5 h-5">
           {[8,14,10,18,12,16,10].map((h,i)=>(
-            <span key={i} className="th-bar w-0.5 bg-red-600 rounded-full" style={{height:h, animationDelay:`${i*0.1}s`}} />
+            <span key={`rec-${i}-${h}`} className="th-bar w-0.5 bg-red-600 rounded-full" style={{height:h, animationDelay:`${i*0.1}s`}} />
           ))}
         </span>
         <button onClick={stop} className="ml-2 p-2 rounded-full bg-red-600 hover:bg-red-700" data-testid="voice-stop-btn" aria-label="Stop recording">

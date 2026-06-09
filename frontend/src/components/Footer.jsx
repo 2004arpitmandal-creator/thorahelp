@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart, Shield, Mail, Github } from "lucide-react";
+import { Heart, Shield, Mail } from "lucide-react";
 import Logo from "@/components/Logo";
 
 export default function Footer() {

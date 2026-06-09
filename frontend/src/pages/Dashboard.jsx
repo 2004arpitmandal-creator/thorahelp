@@ -42,7 +42,10 @@ export default function Dashboard() {
     try {
       const { data } = await api.get("/signals", { params: { lat: loc[0], lng: loc[1], max_distance: 5000 } });
       setSignals(data);
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      // Polling errors are expected (offline, token expired). Log for visibility.
+      console.warn("[thoraHELP] fetch signals failed:", e?.message || e);
+    }
   }, []);
 
   // Geolocation

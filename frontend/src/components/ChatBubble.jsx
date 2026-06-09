@@ -27,7 +27,7 @@ function VoiceBubble({ path, mine }) {
       </button>
       <span className="flex-1 flex items-end gap-0.5 h-6">
         {[8,14,10,18,12,16,10,14,8,12,18,10].map((h,i)=>(
-          <span key={i} className={`w-0.5 ${mine ? "bg-white/80" : "bg-blue-600"} rounded-full`} style={{height:h}} />
+          <span key={`b-${i}-${h}`} className={`w-0.5 ${mine ? "bg-white/80" : "bg-blue-600"} rounded-full`} style={{height:h}} />
         ))}
       </span>
       <audio

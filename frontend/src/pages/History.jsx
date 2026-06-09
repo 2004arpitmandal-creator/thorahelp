@@ -7,7 +7,7 @@ import SignalCard from "@/components/SignalCard";
 import { api } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import {
-  Tabs, TabsList, TabsTrigger, TabsContent,
+  Tabs, TabsList, TabsTrigger,
 } from "@/components/ui/tabs";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
