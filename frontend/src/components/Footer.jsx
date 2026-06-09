@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
-import { Heart, Shield, Mail } from "lucide-react";
+import { Heart, Shield, Mail, MessageCircle } from "lucide-react";
 import Logo from "@/components/Logo";
+
+const CONTACT_EMAIL = "2004arpitmandal@gmail.com";
+const CONTACT_WHATSAPP = "9432146010";
+const CONTACT_WHATSAPP_INTL = "919432146010"; // India country code for wa.me link
 
 export default function Footer() {
   return (
@@ -42,7 +46,26 @@ export default function Footer() {
           <h4 className="font-display font-bold text-slate-900 mb-3">Company</h4>
           <ul className="space-y-2 text-sm text-slate-600">
             <li><Link to="/" className="hover:text-slate-900">About</Link></li>
-            <li><a href="mailto:hello@thorahelp.app" className="hover:text-slate-900 inline-flex items-center gap-1.5"><Mail className="h-3.5 w-3.5"/>Contact</a></li>
+            <li>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                data-testid="footer-email-link"
+                className="hover:text-slate-900 inline-flex items-center gap-1.5 break-all"
+              >
+                <Mail className="h-3.5 w-3.5 shrink-0"/>{CONTACT_EMAIL}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`https://wa.me/${CONTACT_WHATSAPP_INTL}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="footer-whatsapp-link"
+                className="hover:text-slate-900 inline-flex items-center gap-1.5"
+              >
+                <MessageCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0"/>WhatsApp · +91 {CONTACT_WHATSAPP}
+              </a>
+            </li>
             <li><Link to="/" className="hover:text-slate-900">Privacy</Link></li>
             <li><Link to="/" className="hover:text-slate-900">Terms</Link></li>
           </ul>
