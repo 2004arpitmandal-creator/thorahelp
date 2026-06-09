@@ -201,4 +201,11 @@ i18n
     interpolation: { escapeValue: false },
   });
 
+// Keep <html lang> in sync for accessibility
+if (typeof document !== "undefined") {
+  const apply = (lng) => { document.documentElement.lang = lng; };
+  apply(i18n.resolvedLanguage || "en");
+  i18n.on("languageChanged", apply);
+}
+
 export default i18n;

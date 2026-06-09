@@ -47,6 +47,12 @@ Build a community emergency help app called **thoraHELP**:
 - Light pulsing SOS button + pulsing markers on map
 - Toast notifications for incoming signals
 
+## Implemented (2026-02, iteration 2)
+- PWA: manifest.json, service worker, icon.svg, theme color, Apple touch meta
+- i18n: English + Hindi with persistent localStorage language switcher; updates `<html lang>`
+- Signal history page (/app/history) with role tabs (All / I created / I responded) + status filter
+- SMS fallback: device sms: URL scheme button on SignalDetail prefilled with Google Maps location
+
 ## Backlog / Next Action Items
 - P1: Background/push notifications (Firebase) for when app is closed
 - P1: Display responder pins on map; ETA estimates
