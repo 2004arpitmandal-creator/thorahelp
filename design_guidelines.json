@@ -1,0 +1,114 @@
+{
+  "project_name": "thoraHELP",
+  "theme": "Light",
+  "archetype": "1 - Organic & Earthy (Modified for Trust/Medical)",
+  "instructions_to_main_agent": "Design a hybrid web/PWA app. Focus on mobile-first layouts that look native on phones. Prioritize absolute clarity and a trustworthy aesthetic. Use generous spacing (p-6, p-8) except in dense maps/chats. Ensure the SOS button is the dominant UI element on the dashboard.",
+  "constraints": {
+    "forbidden_colors": ["#9D4CDD", "#1B93A4", "purple-on-white gradients", "muddy backgrounds"],
+    "icons": "Use lucide-react ONLY. DO NOT USE EMOJIS.",
+    "fonts": "DO NOT use Inter or Roboto. STRICTLY stick to the defined typography."
+  },
+  "fonts": {
+    "heading": "Outfit",
+    "body": "IBM Plex Sans",
+    "installation": "Import from Google Fonts in index.html or app.css"
+  },
+  "colors": {
+    "primary": "#DC2626", 
+    "primary_hover": "#B91C1C",
+    "secondary": "#2563EB", 
+    "background": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "text_main": "#0F172A",
+    "text_muted": "#64748B",
+    "border": "#E2E8F0",
+    "success": "#10B981", 
+    "warning": "#F59E0B"
+  },
+  "logo_concept": {
+    "name": "thoraHELP",
+    "description": "A minimalist location pin icon combined with a medical cross in the center. Text 'thora' in lowercase bold, 'HELP' in uppercase. Primary text color: #2563EB, pin color: #DC2626.",
+    "typography": "Outfit Black"
+  },
+  "typography_rules": {
+    "h1": "text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-tight text-slate-900 font-['Outfit']",
+    "h2": "text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 font-['Outfit']",
+    "h3": "text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 font-['Outfit']",
+    "body": "text-base leading-relaxed text-slate-700 font-['IBM_Plex_Sans']",
+    "small_label": "text-xs font-bold uppercase tracking-[0.2em] text-slate-500 font-['IBM_Plex_Sans']"
+  },
+  "layout_rules": {
+    "spacing_scale": "Use generous padding for landing pages (p-12, p-16). Use dense padding for dashboard and chat (p-4).",
+    "mobile_first": "Start with single column. It's a PWA so it must feel like a native mobile app. Use a fixed Bottom Nav bar on mobile.",
+    "borders": "Use subtle 1px borders (border-slate-200) for cards. No heavy shadows. Containers with borders MUST have internal padding."
+  },
+  "animations": {
+    "sos_pulse": "CSS ping/pulse on an absolute pseudo-element behind the main SOS button for a radiating emergency signal effect.",
+    "hover_states": "hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 for interactive cards."
+  },
+  "views_and_pages": {
+    "landing_page": {
+      "layout": "Hero Section with large value prop. Features Bento Grid. Trust/Map section. App Store download badges in footer.",
+      "components": "Header with Login/Signup, Hero Section, Feature Bento Grid, Footer."
+    },
+    "auth": {
+      "layout": "Desktop: Split screen (image on one side, form on other). Mobile: Centered card.",
+      "components": "Email/password form, 'Continue with Google' button. Shadcn Input, Label, Button."
+    },
+    "dashboard": {
+      "layout": "Top bar: Header & Notifications. Dominant UI Element: Massive, highly visible SOS Emergency button at top/center. Middle: Leaflet Map showing current location and pulsing radius for active nearby signals. Bottom: Scrollable feed of active requests.",
+      "components": "MapContainer (React Leaflet), Floating SOS Action Button, Bottom Sheet/Drawer for Feed."
+    },
+    "signal_detail_chat": {
+      "layout": "Header with back button and signal status ('Medical Emergency - 150m'). Main area: Scrollable chat thread. Bottom: Input area.",
+      "components": "WhatsApp-style chat bubbles (right/blue for self, left/white for others). Voice note component: horizontal pill with Play/Pause (lucide-react) and simulated waveform (multiple vertical bars). 'I'm on my way' CTA for responders."
+    },
+    "profile": {
+      "layout": "Clean settings layout.",
+      "components": "Form with Blood Group, Emergency Contacts, Profile Picture update."
+    }
+  },
+  "shadcn_components": [
+    "Button",
+    "Input",
+    "Label",
+    "Card",
+    "Form",
+    "Avatar",
+    "Tabs",
+    "ScrollArea"
+  ],
+  "image_urls": {
+    "hero_map": {
+      "url": "https://images.unsplash.com/photo-1476385822777-70eabacbd41f",
+      "category": "background",
+      "description": "Aerial city map view for landing page feature section."
+    },
+    "community_help": {
+      "url": "https://images.unsplash.com/photo-1556484687-30636164638b",
+      "category": "hero",
+      "description": "Community helping hands for onboarding / landing page emotional connection."
+    },
+    "avatar_1": {
+      "url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+      "category": "user",
+      "description": "Profile picture for primary user / responder."
+    },
+    "avatar_2": {
+      "url": "https://images.unsplash.com/photo-1506863530036-1efeddceb993",
+      "category": "user",
+      "description": "Profile picture for requester."
+    }
+  },
+  "libraries": [
+    "lucide-react",
+    "leaflet",
+    "react-leaflet",
+    "framer-motion",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "testing": {
+    "rules": "All interactive elements MUST have data-testid attributes (e.g., data-testid='sos-button', data-testid='chat-input-field'). Use kebab-case, role-based naming."
+  }
+}
