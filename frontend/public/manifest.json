@@ -1,0 +1,48 @@
+{
+  "short_name": "thoraHELP",
+  "name": "thoraHELP — One tap. Your neighbors come running.",
+  "description": "A hyperlocal community emergency help app. Send an SOS and get help from neighbors within 100m.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#DC2626",
+  "background_color": "#F8FAFC",
+  "categories": ["medical", "safety", "social", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Send SOS",
+      "short_name": "SOS",
+      "description": "Send an emergency signal to nearby neighbors",
+      "url": "/app?sos=1",
+      "icons": [{ "src": "icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Live map",
+      "short_name": "Map",
+      "description": "See active signals near you",
+      "url": "/app/map",
+      "icons": [{ "src": "icon.svg", "sizes": "any" }]
+    }
+  ]
+}

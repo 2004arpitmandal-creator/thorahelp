@@ -10,6 +10,7 @@ import Dashboard from "@/pages/Dashboard";
 import SignalDetail from "@/pages/SignalDetail";
 import Profile from "@/pages/Profile";
 import MapPage from "@/pages/MapPage";
+import History from "@/pages/History";
 import AuthCallback from "@/pages/AuthCallback";
 
 function AppRouter() {
@@ -26,6 +27,7 @@ function AppRouter() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/app/map" element={<ProtectedRoute><MapPage /></ProtectedRoute>} />
+      <Route path="/app/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
       <Route path="/app/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/app/signal/:id" element={<ProtectedRoute><SignalDetail /></ProtectedRoute>} />
       <Route path="*" element={<Landing />} />

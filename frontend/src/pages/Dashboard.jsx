@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import SOSButton from "@/components/SOSButton";
@@ -26,6 +27,7 @@ const TYPES = [
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [location, setLocation] = useState(null);
   const [locating, setLocating] = useState(true);
   const [signals, setSignals] = useState([]);
@@ -127,7 +129,7 @@ export default function Dashboard() {
       });
       setDialogOpen(false);
       setDescription("");
-      toast.success("SOS sent", { description: "Neighbors within 100m are being alerted." });
+      toast.success(t("sos.sent"), { description: t("sos.sent_desc") });
       navigate(`/app/signal/${data.signal_id}`);
     } catch (e) {
       toast.error("Failed to send", { description: e.response?.data?.detail || "Try again" });
@@ -146,21 +148,21 @@ export default function Dashboard() {
           <Card className="border-slate-200 p-6 sm:p-8">
             <div className="flex flex-col items-center text-center">
               <span className="text-[10px] font-body font-bold uppercase tracking-[0.25em] text-slate-500">
-                Hold for emergency
+                {t("dashboard.hold_for_emergency")}
               </span>
               <h1 className="mt-2 font-display font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                Hi {user?.name?.split(" ")[0] || "there"}, what&apos;s happening?
+                {t("dashboard.hi", { name: user?.name?.split(" ")[0] || "there" })}
               </h1>
               <div className="my-7">
                 <SOSButton onTrigger={onSOS} disabled={locating} />
               </div>
               <p className="text-sm text-slate-500 font-body">
-                {locating ? "Locating you…" : location ? (
+                {locating ? t("dashboard.locating") : location ? (
                   <span className="inline-flex items-center gap-1.5">
                     <Crosshair className="h-3.5 w-3.5 text-emerald-600" />
-                    GPS locked · ready to alert {signals.length} nearby member{signals.length === 1 ? "" : "s"}
+                    {t(signals.length === 1 ? "dashboard.gps_locked" : "dashboard.gps_locked_plural", { count: signals.length })}
                   </span>
-                ) : "Location unavailable — enable GPS for SOS to work."}
+                ) : t("dashboard.no_gps")}
               </p>
             </div>
           </Card>
@@ -169,9 +171,9 @@ export default function Dashboard() {
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Radar className="h-4 w-4 text-blue-600"/>
-                <h2 className="font-display font-bold text-slate-900">Live signal map</h2>
+                <h2 className="font-display font-bold text-slate-900">{t("dashboard.live_map")}</h2>
               </div>
-              <span className="text-[10px] font-body font-bold uppercase tracking-widest text-slate-500">5km radar</span>
+              <span className="text-[10px] font-body font-bold uppercase tracking-widest text-slate-500">{t("dashboard.radar_5km")}</span>
             </div>
             <div className="h-[420px]">
               <MapView
@@ -186,12 +188,14 @@ export default function Dashboard() {
         {/* Right: Feed */}
         <aside className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-display font-bold text-slate-900 text-lg">Active near you</h2>
-            <span className="text-xs font-body text-slate-500">{signals.length} signal{signals.length === 1 ? "" : "s"}</span>
+            <h2 className="font-display font-bold text-slate-900 text-lg">{t("dashboard.active_near")}</h2>
+            <span className="text-xs font-body text-slate-500">
+              {t(signals.length === 1 ? "dashboard.signal_one" : "dashboard.signal_other", { count: signals.length })}
+            </span>
           </div>
           {signals.length === 0 ? (
             <Card className="border-dashed border-slate-300 bg-white/60 p-8 text-center" data-testid="empty-feed">
-              <p className="text-sm text-slate-600 font-body">No active signals nearby. The neighborhood is safe right now.</p>
+              <p className="text-sm text-slate-600 font-body">{t("dashboard.no_signals")}</p>
             </Card>
           ) : (
             <div className="space-y-3">
@@ -207,14 +211,14 @@ export default function Dashboard() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent data-testid="sos-dialog" className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display font-black text-2xl">Send an SOS signal</DialogTitle>
+            <DialogTitle className="font-display font-black text-2xl">{t("sos.title")}</DialogTitle>
             <DialogDescription className="font-body">
-              Choose the kind of help you need. Neighbors within 100m will be alerted instantly.
+              {t("sos.desc")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid grid-cols-3 gap-2 mt-2">
-            {TYPES.map(({ id, label, Icon, color }) => (
+            {TYPES.map(({ id, labelKey, Icon, color }) => (
               <button
                 key={id}
                 type="button"
@@ -225,18 +229,18 @@ export default function Dashboard() {
                 }`}
               >
                 <Icon className="h-5 w-5"/>
-                <span className="text-xs font-display font-bold">{label}</span>
+                <span className="text-xs font-display font-bold">{t(labelKey)}</span>
               </button>
             ))}
           </div>
 
           <div className="mt-3">
-            <Label htmlFor="desc" className="font-body font-semibold text-slate-700">Add a quick note (optional)</Label>
+            <Label htmlFor="desc" className="font-body font-semibold text-slate-700">{t("sos.note_label")}</Label>
             <Input
               id="desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="E.g. Chest pain · need medication"
+              placeholder={t("sos.note_placeholder")}
               data-testid="sos-desc-input"
               className="mt-1.5 font-body"
             />
@@ -249,7 +253,7 @@ export default function Dashboard() {
               data-testid="sos-cancel-btn"
               className="font-display"
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={sendSignal}
@@ -257,7 +261,7 @@ export default function Dashboard() {
               data-testid="sos-confirm-btn"
               className="font-display font-bold bg-red-600 hover:bg-red-700 text-white"
             >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send SOS now"}
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("sos.send_btn")}
             </Button>
           </DialogFooter>
         </DialogContent>

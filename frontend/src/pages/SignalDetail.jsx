@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api, wsUrl } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import MapView from "@/components/MapView";
@@ -9,7 +10,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Heart, Car, MessageSquare, Send, Users, Radar, ShieldCheck, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Car, MessageSquare, MessageCircle, Send, Users, Radar, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const TYPE_META = {
@@ -18,10 +19,22 @@ const TYPE_META = {
   general: { label: "General", color: "text-blue-700 bg-blue-50 border-blue-200", Icon: MessageSquare },
 };
 
+function buildSmsHref(user, signal) {
+  if (!user?.emergency_contact_phone || !signal) return "#";
+  const mapsLink = `https://maps.google.com/?q=${signal.lat},${signal.lng}`;
+  const reason = signal.type === "medical" ? "medical emergency"
+    : signal.type === "roadside" ? "roadside / vehicle issue"
+    : "help";
+  const body = `URGENT: ${user.name || "I"} sent a thoraHELP SOS (${reason}). My location: ${mapsLink}. Please reach out or come to me.`;
+  // sms: URL with both ? and & supported on iOS and Android
+  return `sms:${user.emergency_contact_phone}?&body=${encodeURIComponent(body)}`;
+}
+
 export default function SignalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [signal, setSignal] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -167,15 +180,15 @@ export default function SignalDetail() {
               </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-              <Stat label="Radius" value={`${signal.radius}m`} Icon={Radar} />
-              <Stat label="Helpers" value={(signal.responders || []).length} Icon={Users} />
-              <Stat label="Blood" value={signal.user_blood_group || "—"} Icon={ShieldCheck} />
+              <Stat label={t("signal.radius")} value={`${signal.radius}m`} Icon={Radar} />
+              <Stat label={t("signal.helpers")} value={(signal.responders || []).length} Icon={Users} />
+              <Stat label={t("signal.blood")} value={signal.user_blood_group || "—"} Icon={ShieldCheck} />
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-col gap-2">
               {mine ? (
                 signal.status !== "resolved" && (
                   <Button onClick={resolve} data-testid="resolve-btn" className="w-full font-display font-bold bg-emerald-600 hover:bg-emerald-700 text-white">
-                    Mark resolved
+                    {t("signal.mark_resolved")}
                   </Button>
                 )
               ) : (
@@ -186,8 +199,28 @@ export default function SignalDetail() {
                     data-testid="respond-btn"
                     className="w-full font-display font-bold bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    {alreadyResponded ? "You're on the way" : "I'm on my way"}
+                    {alreadyResponded ? t("signal.already_responded") : t("signal.on_the_way")}
                   </Button>
+                )
+              )}
+              {mine && signal.status !== "resolved" && (
+                user?.emergency_contact_phone ? (
+                  <a
+                    href={buildSmsHref(user, signal)}
+                    data-testid="sms-contact-btn"
+                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-slate-300 bg-white hover:bg-slate-50 font-display font-bold text-sm text-slate-800 transition"
+                  >
+                    <MessageCircle className="h-4 w-4 text-emerald-600" />
+                    {t("signal.notify_contact")}
+                  </a>
+                ) : (
+                  <Link
+                    to="/app/profile"
+                    data-testid="sms-no-contact-link"
+                    className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-body text-center"
+                  >
+                    {t("signal.no_contact")}
+                  </Link>
                 )
               )}
             </div>
@@ -208,12 +241,12 @@ export default function SignalDetail() {
         <section className="lg:col-span-3 flex flex-col">
           <Card className="border-slate-200 p-0 flex-1 flex flex-col min-h-[60vh]">
             <div className="px-5 py-3 border-b border-slate-200">
-              <h3 className="font-display font-bold text-slate-900">Chat with helpers</h3>
-              <p className="text-xs text-slate-500 font-body">Send text or a voice note. Everyone helping will see it.</p>
+              <h3 className="font-display font-bold text-slate-900">{t("signal.chat_with_helpers")}</h3>
+              <p className="text-xs text-slate-500 font-body">{t("signal.chat_hint")}</p>
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 bg-slate-50/60">
               {messages.length === 0 && (
-                <div className="text-center text-sm text-slate-500 font-body py-8">No messages yet. Say hi or describe the situation.</div>
+                <div className="text-center text-sm text-slate-500 font-body py-8">{t("signal.no_messages")}</div>
               )}
               {messages.map((m) => (
                 <ChatBubble key={m.message_id} message={m} currentUserId={user?.user_id} />
@@ -225,7 +258,7 @@ export default function SignalDetail() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !sending && sendMessage()}
-                placeholder="Type a message…"
+                placeholder={t("signal.type_message")}
                 data-testid="chat-text-input"
                 className="font-body h-11"
               />

@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Siren, MapPin, MessageSquare, Mic, Radar, ShieldCheck, Zap, ArrowRight, Heart, Car, Users } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -18,15 +20,13 @@ export default function Landing() {
         <div className="relative mx-auto max-w-7xl px-6 py-16 lg:py-24 grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-200 bg-red-50 text-red-700 text-xs font-display font-bold uppercase tracking-widest">
-              <Siren className="h-3.5 w-3.5" /> Hyperlocal SOS
+              <Siren className="h-3.5 w-3.5" /> {t("landing.badge")}
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tighter leading-[1.05] text-slate-900">
-              One tap. Your neighbors come running.
+              {t("landing.headline")}
             </h1>
             <p className="mt-5 text-base sm:text-lg text-slate-600 max-w-xl font-body leading-relaxed">
-              thoraHELP turns the people within 100 meters of you into a real-time
-              safety net. Medical emergency, flat tyre or empty fuel tank — send a
-              signal and get help from someone close by, in seconds.
+              {t("landing.sub")}
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Button
@@ -34,7 +34,7 @@ export default function Landing() {
                 data-testid="hero-cta-signup"
                 className="font-display font-bold bg-red-600 hover:bg-red-700 text-white h-12 px-6 text-base"
               >
-                Get the app free <ArrowRight className="ml-2 h-4 w-4" />
+                {t("landing.cta_primary")} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
                 onClick={() => navigate("/login")}
@@ -42,13 +42,13 @@ export default function Landing() {
                 data-testid="hero-cta-login"
                 className="font-display font-bold h-12 px-6 text-base border-slate-300"
               >
-                Sign in
+                {t("common.sign_in")}
               </Button>
             </div>
             <div className="mt-8 flex items-center gap-6 text-xs text-slate-500 font-body">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-emerald-600" /> Privacy-first</span>
-              <span className="flex items-center gap-1.5"><Zap className="h-4 w-4 text-amber-500" /> Real-time alerts</span>
-              <span className="flex items-center gap-1.5"><Radar className="h-4 w-4 text-blue-600" /> 100m → 5km radar</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-emerald-600" /> {t("landing.privacy")}</span>
+              <span className="flex items-center gap-1.5"><Zap className="h-4 w-4 text-amber-500" /> {t("landing.realtime")}</span>
+              <span className="flex items-center gap-1.5"><Radar className="h-4 w-4 text-blue-600" /> {t("landing.radar")}</span>
             </div>
           </div>
 
@@ -136,15 +136,15 @@ export default function Landing() {
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6 py-20 text-center">
         <h2 className="font-display text-3xl sm:text-5xl font-black tracking-tighter text-slate-900">
-          The next 100m matters most.
+          {t("landing.cta_bottom_title")}
         </h2>
-        <p className="mt-4 text-slate-600 font-body max-w-xl mx-auto">Join the neighborhood safety net. It&apos;s free and takes 30 seconds.</p>
+        <p className="mt-4 text-slate-600 font-body max-w-xl mx-auto">{t("landing.cta_bottom_sub")}</p>
         <Button
           onClick={() => navigate("/signup")}
           data-testid="cta-bottom-signup"
           className="mt-7 font-display font-bold bg-red-600 hover:bg-red-700 text-white h-12 px-8 text-base"
         >
-          Create your account <ArrowRight className="ml-2 h-4 w-4" />
+          {t("landing.cta_bottom_btn")} <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </section>
 

@@ -1,16 +1,18 @@
 import { NavLink } from "react-router-dom";
-import { Home, Map, User } from "lucide-react";
-
-const items = [
-  { to: "/app", icon: Home, label: "Home", testid: "bottomnav-home", end: true },
-  { to: "/app/map", icon: Map, label: "Map", testid: "bottomnav-map" },
-  { to: "/app/profile", icon: User, label: "Profile", testid: "bottomnav-profile" },
-];
+import { useTranslation } from "react-i18next";
+import { Home, Map, History as HistoryIcon, User } from "lucide-react";
 
 export default function BottomNav() {
+  const { t } = useTranslation();
+  const items = [
+    { to: "/app", icon: Home, label: t("common.home"), testid: "bottomnav-home", end: true },
+    { to: "/app/map", icon: Map, label: t("common.map"), testid: "bottomnav-map" },
+    { to: "/app/history", icon: HistoryIcon, label: t("common.history"), testid: "bottomnav-history" },
+    { to: "/app/profile", icon: User, label: t("common.profile").split(" ")[0], testid: "bottomnav-profile" },
+  ];
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-md">
-      <div className="grid grid-cols-3 h-16">
+      <div className="grid grid-cols-4 h-16">
         {items.map(({ to, icon: Icon, label, testid, end }) => (
           <NavLink
             key={to}

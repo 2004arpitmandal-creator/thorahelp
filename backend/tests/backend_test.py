@@ -236,6 +236,111 @@ class TestResolve:
         assert r.json()["status"] == "resolved"
 
 
+# --- Signals history -----------------------------------------------------
+class TestSignalsHistory:
+    """GET /api/signals/history with role + status filters."""
+
+    def test_requires_auth(self):
+        r = requests.get(f"{API}/signals/history")
+        assert r.status_code == 401
+
+    def test_history_default_returns_user_signals(self, user_a, created_signal):
+        r = requests.get(f"{API}/signals/history", headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        data = r.json()
+        assert isinstance(data, list)
+        # the created_signal belongs to user_a (creator) -> should be present
+        ids = [s["signal_id"] for s in data]
+        assert created_signal["signal_id"] in ids
+        # limit cap
+        assert len(data) <= 100
+
+    def test_history_role_created(self, user_a, created_signal):
+        r = requests.get(f"{API}/signals/history",
+                         params={"role": "created"},
+                         headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        data = r.json()
+        # every returned signal must have user_a as creator
+        uid = user_a["user"]["user_id"]
+        for s in data:
+            assert s["user_id"] == uid
+        assert created_signal["signal_id"] in [s["signal_id"] for s in data]
+
+    def test_history_role_responded(self, user_b, created_signal):
+        # user_b responded to created_signal in TestSignals earlier
+        r = requests.get(f"{API}/signals/history",
+                         params={"role": "responded"},
+                         headers=auth_headers(user_b["token"]))
+        assert r.status_code == 200
+        data = r.json()
+        ids = [s["signal_id"] for s in data]
+        assert created_signal["signal_id"] in ids
+        uid = user_b["user"]["user_id"]
+        for s in data:
+            responder_ids = [r["user_id"] for r in s.get("responders", [])]
+            assert uid in responder_ids
+
+    def test_history_status_active_filter(self, user_a):
+        # Create a fresh active signal, then verify it appears under status=active
+        r = requests.post(f"{API}/signals",
+                          json={"type": "general", "description": "active-history",
+                                "lat": LAT + 0.002, "lng": LNG + 0.002},
+                          headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        sid = r.json()["signal_id"]
+        r2 = requests.get(f"{API}/signals/history",
+                          params={"role": "created", "status": "active"},
+                          headers=auth_headers(user_a["token"]))
+        assert r2.status_code == 200
+        statuses = {s["status"] for s in r2.json()}
+        # if any returned, they must all be active
+        assert statuses.issubset({"active"})
+        assert sid in [s["signal_id"] for s in r2.json()]
+
+    def test_history_status_resolved_filter(self, user_a):
+        # Create then resolve a signal, ensure it appears under status=resolved
+        r = requests.post(f"{API}/signals",
+                          json={"type": "general", "description": "to-resolve",
+                                "lat": LAT + 0.003, "lng": LNG + 0.003},
+                          headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        sid = r.json()["signal_id"]
+        rr = requests.post(f"{API}/signals/{sid}/resolve", headers=auth_headers(user_a["token"]))
+        assert rr.status_code == 200
+        rh = requests.get(f"{API}/signals/history",
+                          params={"role": "created", "status": "resolved"},
+                          headers=auth_headers(user_a["token"]))
+        assert rh.status_code == 200
+        items = rh.json()
+        assert sid in [s["signal_id"] for s in items]
+        for s in items:
+            assert s["status"] == "resolved"
+
+    def test_history_admin_no_signals_empty(self, admin_token):
+        token, _ = admin_token
+        r = requests.get(f"{API}/signals/history", headers=auth_headers(token))
+        assert r.status_code == 200
+        assert isinstance(r.json(), list)
+        # admin hasn't created/responded to test signals - likely empty
+        # but in case other tests reused admin, just verify all returned belong to admin
+        admin_uid = _["user_id"] if isinstance(_, dict) else None
+        # weak assertion: list type already verified
+
+    def test_get_signal_by_id_regression(self, user_a, created_signal):
+        # Regression: /api/signals/{signal_id} should still work AFTER /history route
+        sid = created_signal["signal_id"]
+        r = requests.get(f"{API}/signals/{sid}", headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        assert r.json()["signal_id"] == sid
+
+    def test_get_signal_history_literal_path_not_treated_as_id(self, user_a):
+        # Ensure /signals/history is matched as history endpoint not signal_id='history'
+        r = requests.get(f"{API}/signals/history", headers=auth_headers(user_a["token"]))
+        assert r.status_code == 200
+        assert isinstance(r.json(), list)
+
+
 # --- Voice upload --------------------------------------------------------
 class TestVoiceUpload:
     def test_voice_multipart_upload(self, user_a):

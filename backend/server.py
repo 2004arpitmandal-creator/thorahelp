@@ -394,6 +394,26 @@ async def list_signals(
     return results
 
 
+@api_router.get("/signals/history")
+async def signals_history(
+    role: str = Query("all"),  # all | created | responded
+    status: str = Query("any"),  # any | active | responded | resolved
+    user=Depends(get_current_user),
+):
+    uid = user["user_id"]
+    filt: Dict[str, Any] = {}
+    if role == "created":
+        filt["user_id"] = uid
+    elif role == "responded":
+        filt["responders.user_id"] = uid
+    else:
+        filt["$or"] = [{"user_id": uid}, {"responders.user_id": uid}]
+    if status != "any":
+        filt["status"] = status
+    cur = db.signals.find(filt, {"_id": 0}).sort("created_at", -1).limit(100)
+    return [s async for s in cur]
+
+
 @api_router.get("/signals/{signal_id}")
 async def get_signal(signal_id: str, user=Depends(get_current_user)):
     s = await db.signals.find_one({"signal_id": signal_id}, {"_id": 0})
