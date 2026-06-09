@@ -7,6 +7,7 @@ import SOSButton from "@/components/SOSButton";
 import MapView from "@/components/MapView";
 import SignalCard from "@/components/SignalCard";
 import { api, wsUrl } from "@/lib/api";
+import { log } from "@/lib/logger";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
@@ -43,8 +44,8 @@ export default function Dashboard() {
       const { data } = await api.get("/signals", { params: { lat: loc[0], lng: loc[1], max_distance: 5000 } });
       setSignals(data);
     } catch (e) {
-      // Polling errors are expected (offline, token expired). Log for visibility.
-      console.warn("[thoraHELP] fetch signals failed:", e?.message || e);
+      // Polling errors are expected (offline, token expired). Log in dev only.
+      log.warn("[thoraHELP] fetch signals failed:", e?.message || e);
     }
   }, []);
 

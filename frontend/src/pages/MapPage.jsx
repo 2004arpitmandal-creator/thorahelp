@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import MapView from "@/components/MapView";
 import { api } from "@/lib/api";
+import { log } from "@/lib/logger";
 import { Card } from "@/components/ui/card";
 import SignalCard from "@/components/SignalCard";
 
@@ -27,7 +28,9 @@ export default function MapPage() {
     try {
       const { data } = await api.get("/signals", { params: { lat: loc[0], lng: loc[1], max_distance: 5000 } });
       setSignals(data);
-    } catch { /* ignore */ }
+    } catch (e) {
+      log.warn("[thoraHELP] fetch nearby signals failed:", e?.message || e);
+    }
   }, []);
 
   useEffect(() => {

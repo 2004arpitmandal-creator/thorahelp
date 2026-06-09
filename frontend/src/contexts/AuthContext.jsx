@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { api, setToken } from "@/lib/api";
+import { log } from "@/lib/logger";
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,7 @@ export function AuthProvider({ children }) {
     } catch (e) {
       // 401 here is expected for unauthenticated visitors. Don't surface; just clear user.
       if (e?.response?.status && e.response.status !== 401) {
-        console.warn("[thoraHELP] /auth/me failed:", e?.message || e);
+        log.warn("[thoraHELP] /auth/me failed:", e?.message || e);
       }
       setUser(null);
       return null;
